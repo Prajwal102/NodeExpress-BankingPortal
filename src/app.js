@@ -1,8 +1,9 @@
 const fs = require('fs');
 const path = require('path')
 
-
 const {accounts,users,writeJSON} = require('./data.js');
+const accountRoutes = require('./routes/accounts.js');
+const servicesRoutes = require('./routes/services.js');
 const express = require('express');
 const { ap } = require('ramda');
 const app = express();
@@ -21,49 +22,14 @@ app.get('/',(req,res)=>{
     res.render('index',{title:'Account Summary',accounts:accounts})
 });
 
-app.get('/savings',(req,res)=>{
-    res.render('account',{account:accounts.savings})
-});
-
-app.get('/credit',(req,res)=>{
-    res.render('account',{account:accounts.credit})
-});
-app.get('/checking',(req,res)=>{
-    res.render('account',{account:accounts.checking})
-});
+app.use('/account',accountRoutes);
+app.use('/services',servicesRoutes);
 
 app.get('/profile',(req,res)=>{
     res.render('profile',{user:users[0]})
 })
 
 
-app.get('/transfer',(req,res)=>{
-    res.render('transfer')
-})
-
-app.post('/transfer',(req,res)=>{
-    from_acc = req.body.from;
-    to_acc = req.body.to;
-    amt = req.body.amount;
-
-    accounts[from_acc]['balance'] -= amt;
-    accounts[to_acc]['balance'] += parseInt(amt, 10);
-
-    writeJSON();
-    res.render('transfer',{message:"Transfer Completed"})
-
-});
-
-app.get('/payment',(req,res)=>{
-    res.render('payment',{accounts:accounts.credit})
-})
-
-app.post('/payment', (req, res) => {
-    accounts.credit.balance -= req.body.amount;
-    accounts.credit.available += parseInt(req.body.amount);
-    writeJSON();
-    res.render('payment', {message: 'Payment Successful', account: accounts.credit});
-});
 
 
 app.listen(PORT,()=>{
