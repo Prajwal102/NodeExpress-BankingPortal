@@ -11,7 +11,6 @@ const PORT = process.env.port || 3000;
 app.use(express.static(path.join(__dirname,'/public')))
 app.use(express.urlencoded({extended:true}))
 
-console.log(__dirname);
 
 app.set('views',path.join(__dirname,'/views'));
 app.set('view engine','ejs');
@@ -45,8 +44,6 @@ app.post('/transfer',(req,res)=>{
     from_acc = req.body.from;
     to_acc = req.body.to;
     amt = req.body.amount;
-
-    console.log(req.body)
 
     accounts[from_acc]['balance'] -= amt;
     accounts[to_acc]['balance'] += parseInt(amt, 10);
